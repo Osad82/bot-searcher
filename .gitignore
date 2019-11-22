@@ -1,0 +1,11 @@
+venv/
+.vscode/
+*.log
+config.py
+*.db
+__pycache__/
+tmp*.*
+tmp/
+images/
+credentials.json
+token.pickle
