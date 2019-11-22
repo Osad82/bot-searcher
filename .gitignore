@@ -9,3 +9,4 @@ tmp/
 images/
 credentials.json
 token.pickle
+*.txt
