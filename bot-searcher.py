@@ -40,6 +40,7 @@ def main():
     
 
     dp.add_handler(CallbackQueryHandler(output_format_handler, pattern='text'))
+    dp.add_handler(CommandHandler('start', start))
 
 
     # webhook_domain = 'https://translatebot.ru'    
