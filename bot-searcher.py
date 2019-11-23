@@ -27,7 +27,9 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(funcName)s - %(messa
 
 mybot = Updater(TOKEN, use_context=True)
 
-def main():        
+def main():   
+
+    create_user_base()     
     
     # Инициализируем MessageQueue 
     mybot.bot._msg_queue = mq.MessageQueue()
@@ -39,8 +41,30 @@ def main():
     dp = mybot.dispatcher
     
 
-    dp.add_handler(CallbackQueryHandler(output_format_handler, pattern='text'))
+    approve_conv = ConversationHandler(
+        entry_points=[CallbackQueryHandler(add_or_not_user_access)], 
+
+        states={
+            '1': [MessageHandler(Filters.text, get_real_name),
+                  CallbackQueryHandler(pass_get_real_name, pattern='passs')]
+
+
+
+        }, 
+
+        fallbacks=[]
+
+
+    )
+
+
+
+    dp.add_handler(
+        MessageHandler(Filters.regex('^(Запросить доступ к боту)$'), user_request_add_to_bot))
+
+    dp.add_handler(approve_conv)
     dp.add_handler(CommandHandler('start', start))
+    # dp.add_handler(CallbackQueryHandler(add_or_not_user_access))
 
 
     # webhook_domain = 'https://translatebot.ru'    
