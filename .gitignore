@@ -7,6 +7,6 @@ __pycache__/
 tmp*.*
 tmp/
 images/
-credentials.json
+*.json
 token.pickle
 *.txt

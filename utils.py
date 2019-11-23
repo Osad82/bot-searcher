@@ -20,7 +20,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(funcName)s - %(messa
 def get_inline_keyboard(update, context):
     user_id = update.message.from_user.id
     username = update.message.from_user.username
-    real_name = get_data_cell('real_name', user_id)
+    real_name = get_real_name(update, context)
     access = get_data_cell('access', user_id)
     inlinekeyboard = [
         [InlineKeyboardButton(
@@ -31,6 +31,18 @@ def get_inline_keyboard(update, context):
     return kbd_markup
 
 
+def get_real_name(update, context):
+    user_id = update.message.from_user.id
+    if 'real_name' in context.user_data:
+        real_name = context.user_data['real_name']
+    else:
+        try:
+            real_name = get_data_cell('real_name', user_id)
+            return real_name
+        except TypeError:
+            return update.message.from_user.username
+
+    
 def get_pass_inline_keyboard():
     inlinekeyboard = [
         [InlineKeyboardButton('Пропустить шаг', callback_data='passs')]
@@ -126,9 +138,14 @@ def is_subscriber(user_id):
     for user in users_list:
         check_user_id, access = user
         if check_user_id == user_id:
-            if access == 'yes':                
+            if access == 'yes':  
+                print('True')              
                 return True    
+    print('False')
     return False
+
+
+    
 
 
 def save_target_user_data_to_context(update, context):
@@ -143,8 +160,7 @@ def save_target_user_data_to_context(update, context):
 
 
 
-
 if __name__ == "__main__":
     # p = get_data_string('*', TG_ADMIN_ID)
-    is_subscriber(TG_ADMIN_ID)
+    is_subscriber(891850606)
     # pass

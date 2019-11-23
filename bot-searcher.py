@@ -47,15 +47,23 @@ def main():
         states={
             '1': [MessageHandler(Filters.text, get_real_name),
                   CallbackQueryHandler(pass_get_real_name, pattern='passs')]
-
-
-
         }, 
 
         fallbacks=[]
-
-
     )
+
+
+    search_conv = ConversationHandler(
+        entry_points=[CommandHandler('search', user_search)], 
+
+        states={
+            '1': [MessageHandler(Filters.text, send_search_result)]
+        }, 
+
+        fallbacks=[]
+    )
+
+
 
 
 
@@ -63,6 +71,7 @@ def main():
         MessageHandler(Filters.regex('^(Запросить доступ к боту)$'), user_request_add_to_bot))
 
     dp.add_handler(approve_conv)
+    dp.add_handler(search_conv)
     dp.add_handler(CommandHandler('start', start))
     # dp.add_handler(CallbackQueryHandler(add_or_not_user_access))
 

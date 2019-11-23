@@ -1,7 +1,10 @@
 from telegram.ext import ConversationHandler
 
 from config import *
+from google_utils import get_list_of_rows, search
 from utils import *
+
+
 
 
 
@@ -10,10 +13,9 @@ def start(update, context):
     data = get_initial_data(update)
     write_initial_data_to_base(data)
     update.message.reply_text(
-        'Вы может подписаться на бот', 
+        'Вы можете подписаться на бот. Чтобы отправить запрос админу, нажмите кнопку внизу', 
         reply_markup=get_reply_kb(user_id))
         
-
 
 def user_request_add_to_bot(update, context):
     user_id = update.message.from_user.id
@@ -77,11 +79,30 @@ def admin_notification(update, context):
     )
 
 
+def user_search(update, context):
+    user_id = update.message.from_user.id
+    if is_subscriber(user_id) == True:
+        update.message.reply_text('Введите ФИО для поиска в базе')
+        return '1'
 
+    else:
+        update.message.reply_text(
+            'Вы не подписаны. Чтобы подписаться, обратитесь к админу',
+            reply_markup=get_reply_kb(user_id))
+        return ConversationHandler.END
     
 
 
+def send_search_result(update, context):
+    all_list = get_list_of_rows(SPREADSHEET_URL)
+    result_list = search(all_list, update.message.text)
+    update.message.reply_text(f'Найдено {len(result_list)} записей')
 
+    for result in result_list:
+        text = msg_search_result(result)        
+        update.message.reply_text(text)
+    return ConversationHandler.END
+    
 
 
 
