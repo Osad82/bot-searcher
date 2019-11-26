@@ -52,12 +52,31 @@ def main():
         fallbacks=[]
     )
 
+    block_user_conv = ConversationHandler(
+        entry_points=[MessageHandler(Filters.regex('^(Закрыть доступ)$'), block_user_start)], 
+
+        states={
+            '1': [MessageHandler(Filters.text, send_matched_users)],
+
+            '2': [MessageHandler(Filters.text, block_user), 
+                  CommandHandler('cancel', cancel_conv)]
+
+            
+        }, 
+
+        fallbacks=[]
+    )
+
+
+
+
 
     search_conv = ConversationHandler(
         entry_points=[CommandHandler('search', user_search)], 
 
         states={
-            '1': [MessageHandler(Filters.text, send_search_result)]
+            '1': [MessageHandler(Filters.text, send_search_result),
+                  CommandHandler('cancel', cancel_conv)]
         }, 
 
         fallbacks=[]
@@ -71,6 +90,7 @@ def main():
         MessageHandler(Filters.regex('^(Запросить доступ к боту)$'), user_request_add_to_bot))
 
     dp.add_handler(approve_conv)
+    dp.add_handler(block_user_conv)
     dp.add_handler(search_conv)
     dp.add_handler(CommandHandler('start', start))
     # dp.add_handler(CallbackQueryHandler(add_or_not_user_access))

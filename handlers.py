@@ -8,6 +8,24 @@ from utils import *
 
 
 
+# Человек находит бота в поисковике или переходит по ссылке. “Этот бот 
+# делает то-то и то-то. Чтобы получить к нему доступ, нажмите кнопку СТАРТ внизу.”
+
+# НАЖАЛ СТАРТ. 
+
+# Ему сообщение: Чтобы получить доступ к базе, сперва пообщайтесь с админом. 
+
+# ПИШЕТ АДМИНУ. Админ отвечает… после разговора -- хорошо, 
+# чтобы получить доступ к боту нажмите /new_user
+
+# НАЖАЛ. Админу приходит сообщение в котором он одобряет его… и тут же вносит 
+# имя пользователя, по которому потом можно будет его вытягивать из базы для удаления. 
+# Человеку приходит уведомление, что его одобрили и он теперь может искать в базе. 
+
+
+
+
+
 def start(update, context):
     user_id = update.message.from_user.id
     data = get_initial_data(update)
@@ -72,9 +90,11 @@ def pass_get_real_name(update, context):
 def admin_notification(update, context):
     user_name = update.message.from_user.username
     user_id = update.message.from_user.id
+
+    name = get_kb_real_name(update, context)
     context.bot.send_message(
         chat_id=TG_ADMIN_ID, 
-        text=f'Пользователь {user_name} (id {user_id}) хочет подписаться на бот. Одобрить?',
+        text=f'Пользователь {name} (id {user_id}) хочет подписаться на бот. Одобрить?',
         reply_markup=get_inline_keyboard(update, context)
     )
 
@@ -92,17 +112,69 @@ def user_search(update, context):
         return ConversationHandler.END
     
 
-
 def send_search_result(update, context):
     all_list = get_list_of_rows(SPREADSHEET_URL)
     result_list = search(all_list, update.message.text)
-    update.message.reply_text(f'Найдено {len(result_list)} записей')
+    if len(result_list) == 0:
+        update.message.reply_text('Ничего не найдено. Попробуйте другой запрос или /cancel для отмены')
+        return '1'    
 
     for result in result_list:
         text = msg_search_result(result)        
         update.message.reply_text(text)
     return ConversationHandler.END
     
+
+def block_user_start(update, context):    
+    user_id = update.message.from_user.id
+
+    if user_id != TG_ADMIN_ID:
+        update.message.reply_text('Функционал доступен только админу')
+        return ConversationHandler.END
+
+    update.message.reply_text(
+        'Введите реальное имя пользователя, которого надо удалить (как в записной книжке)',
+        reply_markup=get_reply_kb(user_id))
+    return '1'
+
+
+def send_matched_users(update, context):
+    user_id = update.message.from_user.id
+    real_name = update.message.text
+    msg = msg_searched_users_to_block(real_name)
+    if len(msg) == 0:
+        update.message.reply_text('Не найдено совпадений. Задайте другие данные')
+        return '1'
+
+    else:
+        update.message.reply_text(msg)
+        update.message.reply_text(
+            'Впишите id пользователя, которого нужно удалить или \
+/cancel, чтобы выйти из режима поиска',
+        reply_markup=get_reply_kb(user_id))
+        return '2'
+
+
+def block_user(update, context):
+    user_id = update.message.from_user.id
+    target_user_id = update.message.text
+    write_entry_to_base('access', 'no', target_user_id)
+    update.message.reply_text(
+        f'Пользователь с id {target_user_id} больше не имеет доступа к боту',
+        reply_markup=get_reply_kb(user_id))
+    return ConversationHandler.END
+
+
+
+def cancel_conv(update, context):
+    update.message.reply_text('Режим диалога завершён')
+    return ConversationHandler.END
+
+
+
+def get_id_to_delete(update, context):
+    pass
+
 
 
 

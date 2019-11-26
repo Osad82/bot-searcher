@@ -20,7 +20,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(funcName)s - %(messa
 def get_inline_keyboard(update, context):
     user_id = update.message.from_user.id
     username = update.message.from_user.username
-    real_name = get_real_name(update, context)
+    real_name = get_kb_real_name(update, context)
     access = get_data_cell('access', user_id)
     inlinekeyboard = [
         [InlineKeyboardButton(
@@ -31,7 +31,7 @@ def get_inline_keyboard(update, context):
     return kbd_markup
 
 
-def get_real_name(update, context):
+def get_kb_real_name(update, context):
     user_id = update.message.from_user.id
     if 'real_name' in context.user_data:
         real_name = context.user_data['real_name']
@@ -53,11 +53,10 @@ def get_pass_inline_keyboard():
 
 def get_reply_kb(user_id):
     if user_id == TG_ADMIN_ID:
-        keyboard = [[]]
-        kb = ReplyKeyboardMarkup(keyboard)        
+        keyboard = [['Закрыть доступ']]             
     else:
         keyboard = [['Запросить доступ к боту']]
-        kb = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)    
+    kb = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)    
     return kb
 
 
@@ -123,6 +122,17 @@ def get_data_string(column, user_id):
     conn.close()             
     return data_list
 
+
+def get_user_id_by_real_name(real_name):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()    
+    cursor.execute(f'SELECT user_id, real_name FROM users WHERE real_name LIKE "%{real_name}%"')    
+    data_list = cursor.fetchall()
+    conn.commit()
+    conn.close()             
+    return data_list
+
+
 def get_data_cell(column, user_id):
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -145,9 +155,6 @@ def is_subscriber(user_id):
     return False
 
 
-    
-
-
 def save_target_user_data_to_context(update, context):
     query = update.callback_query
     _, target_user_id, target_username, real_name, access = (query.data).split(', ')
@@ -158,9 +165,30 @@ def save_target_user_data_to_context(update, context):
     
 
 
+def msg_searched_users_to_block(real_name):
+    text = ''
+    users_list = get_user_id_by_real_name(real_name)
+    if len(users_list) == 0:
+        return text
+    
+    for user in users_list:
+        user_id, real_name = user
+        text += f'{str(user_id)} - {real_name}\n'            
+        text = text[:-1]    
+        msg = 'Результат: \n\n' + text        
+        return msg
+
+
+
+
+
 
 
 if __name__ == "__main__":
     # p = get_data_string('*', TG_ADMIN_ID)
-    is_subscriber(891850606)
+    # is_subscriber(891850606)
+    # get_user_id_by_real_name('Катю')
+    # r = msg_searched_users_to_block('Тан')
+    r = get_data_cell('real_name', 374251293)
+    print(r)
     # pass
