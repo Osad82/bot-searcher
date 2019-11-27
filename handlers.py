@@ -45,9 +45,12 @@ def send_all_user_messages_to_admin(update, context):
             reply_markup=get_start_conv_keyboard(update, context)
         )
     else:
+        user_name = update.message.from_user.first_name
+        text = f'<b>{user_name} (id {str(user_id)}) пишет:</b> {text}'
         context.bot.send_message(
             chat_id=TG_ADMIN_ID,
-            text=text
+            text=text, 
+            parse_mode=ParseMode.HTML
         )
     
     
@@ -71,9 +74,7 @@ def send_admin_message_to_user(update, context):
 def query_handler(update, context):
     query = update.callback_query    
     if 'start_conv' in query.data:
-        _, target_user_id, name = (query.data).split(', ')
-        context.user_data['target_user_id'] = target_user_id
-        context.user_data['name'] = name
+        save_target_user_data_to_context(update, context)
         query.message.reply_text('Режим диалога включен. Теперь можно писать пользователю')
 
 

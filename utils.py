@@ -52,11 +52,13 @@ def get_pass_inline_keyboard():
 
 
 def get_start_conv_keyboard(update, context):
-    name = update.message.from_user.first_name
     user_id = update.message.from_user.id
+    username = update.message.from_user.username
+    real_name = get_kb_real_name(update, context)
+    access = get_data_cell('access', user_id)
 
     inlinekeyboard = [
-        [InlineKeyboardButton('Начать диалог', callback_data=f'start_conv, {user_id}, {name}')]
+        [InlineKeyboardButton('Начать диалог', callback_data=f'start_conv, {user_id}, {username}, {real_name}, {access}')]
          ]
     kbd_markup = InlineKeyboardMarkup(inlinekeyboard)
     return kbd_markup
