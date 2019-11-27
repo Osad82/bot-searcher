@@ -1,3 +1,4 @@
+from telegram.error import BadRequest
 from telegram.ext import ConversationHandler
 
 from config import *
@@ -35,20 +36,47 @@ def start(update, context):
 def send_all_user_messages_to_admin(update, context):        
     text = update.message.text        
     user_id = update.message.from_user.id    
-    context.bot.send_message(
-        chat_id=TG_ADMIN_ID,
-        text=text
-    )
-    # context.user_data['target_user_id'] = user_id
+
+    if 'conv_started' not in context.user_data:
+        context.user_data['conv_started'] = 'yes'
+        context.bot.send_message(
+            chat_id=TG_ADMIN_ID,
+            text=text,
+            reply_markup=get_start_conv_keyboard(update, context)
+        )
+    else:
+        context.bot.send_message(
+            chat_id=TG_ADMIN_ID,
+            text=text
+        )
+    
+    
         
 
-def send_admin_message_to_user(update, context):    
-    text_full = update.message.text
-    target_user_id = text_full.split(';;; ')[-1]
-    context.bot.send_message(
-        chat_id=target_user_id, 
-        text=update.message.text
-    )
+def send_admin_message_to_user(update, context):            
+    try:
+        target_user_id = context.user_data['target_user_id']
+        context.bot.send_message(
+            chat_id=target_user_id, 
+            text=update.message.text
+        )
+    except KeyError:
+        update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
+
+    except BadRequest:
+        update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
+
+
+
+def query_handler(update, context):
+    query = update.callback_query    
+    if 'start_conv' in query.data:
+        _, target_user_id, name = (query.data).split(', ')
+        context.user_data['target_user_id'] = target_user_id
+        context.user_data['name'] = name
+        query.message.reply_text('Режим диалога включен. Теперь можно писать пользователю')
+
+
 
 
 

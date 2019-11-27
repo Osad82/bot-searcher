@@ -51,6 +51,17 @@ def get_pass_inline_keyboard():
     return kbd_markup
 
 
+def get_start_conv_keyboard(update, context):
+    name = update.message.from_user.first_name
+    user_id = update.message.from_user.id
+
+    inlinekeyboard = [
+        [InlineKeyboardButton('Начать диалог', callback_data=f'start_conv, {user_id}, {name}')]
+         ]
+    kbd_markup = InlineKeyboardMarkup(inlinekeyboard)
+    return kbd_markup
+
+
 def get_reply_kb(user_id):
     if user_id == TG_ADMIN_ID:
         keyboard = [['Закрыть доступ']]             
