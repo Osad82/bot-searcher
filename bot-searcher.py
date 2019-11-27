@@ -53,7 +53,8 @@ def main():
     )
 
     block_user_conv = ConversationHandler(
-        entry_points=[MessageHandler(Filters.regex('^(Закрыть доступ)$'), block_user_start)], 
+        entry_points=[MessageHandler(Filters.regex('^(Закрыть доступ)$'), block_user_start),
+                      CommandHandler('delete', block_user_start)], 
 
         states={
             '1': [MessageHandler(Filters.text, send_matched_users)],
@@ -97,7 +98,11 @@ def main():
         MessageHandler(Filters.text & (~ Filters.user(TG_ADMIN_ID)), send_all_user_messages_to_admin)
         )
     dp.add_handler(approve_conv)
+    dp.add_handler(CommandHandler('send_invitation', send_invitation))
+    dp.add_handler(CommandHandler('new_user', user_request_add_to_bot))
+
     dp.add_handler(MessageHandler(Filters.user(TG_ADMIN_ID), send_admin_message_to_user))
+    
     # dp.add_handler(CallbackQueryHandler(add_or_not_user_access))
 
 

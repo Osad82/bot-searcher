@@ -65,10 +65,14 @@ def get_start_conv_keyboard(update, context):
 
 
 def get_reply_kb(user_id):
-    if user_id == TG_ADMIN_ID:
-        keyboard = [['Закрыть доступ']]             
-    else:
-        keyboard = [['Запросить доступ к боту']]
+    kb_on = False
+    if kb_on == True:
+        if user_id == TG_ADMIN_ID:
+            keyboard = [['Закрыть доступ']]             
+        else:
+            keyboard = [['Запросить доступ к боту']]
+    else: keyboard = [[]]
+    
     kb = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)    
     return kb
 

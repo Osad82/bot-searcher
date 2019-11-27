@@ -1,4 +1,5 @@
 from telegram.error import BadRequest
+from telegram import ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
 from config import *
@@ -30,7 +31,7 @@ from utils import *
 def start(update, context):    
     data = get_initial_data(update)
     write_initial_data_to_base(data)
-    update.message.reply_text(msg_start)
+    update.message.reply_text(msg_start, reply_markup=ReplyKeyboardRemove())
 
 
 def send_all_user_messages_to_admin(update, context):        
@@ -56,12 +57,13 @@ def send_all_user_messages_to_admin(update, context):
     
         
 
-def send_admin_message_to_user(update, context):            
+def send_admin_message_to_user(update, context):    
+    text = update.message.text    
     try:
         target_user_id = context.user_data['target_user_id']
         context.bot.send_message(
             chat_id=target_user_id, 
-            text=update.message.text
+            text=text
         )
     except KeyError:
         update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
@@ -78,7 +80,12 @@ def query_handler(update, context):
         query.message.reply_text('Режим диалога включен. Теперь можно писать пользователю')
 
 
-
+def send_invitation(update, context):
+    target_user_id = context.user_data['target_user_id']
+    context.bot.send_message(
+        chat_id=target_user_id,
+        text=msg_send_invitation
+    )
 
 
 def user_request_add_to_bot(update, context):
@@ -118,6 +125,12 @@ def get_real_name(update, context):
     target_user_id = context.user_data['target_user_id']
     write_entry_to_base('real_name', real_name, target_user_id)
     update.message.reply_text(f'Пользователь {real_name} добавлен')
+
+    context.bot.send_message(
+        chat_id=target_user_id,
+        text=msg_approved_start_message
+    )
+
     return ConversationHandler.END
 
 
@@ -129,6 +142,10 @@ def pass_get_real_name(update, context):
         real_name = get_data_cell('real_name', target_user_id)
     query = update.callback_query
     query.message.reply_text(f'Пользователь {real_name} добавлен')
+    context.bot.send_message(
+        chat_id=target_user_id,
+        text=msg_approved_start_message
+    )
     return ConversationHandler.END
 
 
@@ -162,7 +179,7 @@ def send_search_result(update, context):
     all_list = get_list_of_rows(SPREADSHEET_URL)
     result_list = search(all_list, update.message.text)
     if len(result_list) == 0:
-        update.message.reply_text('Ничего не найдено. Попробуйте другой запрос или /cancel для отмены')
+        update.message.reply_text(msg_no_result)
         return '1'    
 
     for result in result_list:
@@ -195,9 +212,8 @@ def send_matched_users(update, context):
     else:
         update.message.reply_text(msg)
         update.message.reply_text(
-            'Впишите id пользователя, которого нужно удалить или \
-/cancel, чтобы выйти из режима поиска',
-        reply_markup=get_reply_kb(user_id))
+            msg_user_id_to_delete,
+            reply_markup=get_reply_kb(user_id))
         return '2'
 
 
