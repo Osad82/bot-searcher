@@ -29,9 +29,14 @@ from utils import *
 
 
 def start(update, context):    
+    user_id = update.message.from_user.id
     data = get_initial_data(update)
     write_initial_data_to_base(data)
-    update.message.reply_text(msg_start, reply_markup=ReplyKeyboardRemove())
+    
+    if user_id == TG_ADMIN_ID:
+        update.message.reply_text(msg_start_admin, reply_markup=ReplyKeyboardRemove())
+    else:
+        update.message.reply_text(msg_start, reply_markup=ReplyKeyboardRemove())
 
 
 def send_all_user_messages_to_admin(update, context):        
@@ -81,7 +86,10 @@ def query_handler(update, context):
 
 
 def send_invitation(update, context):
-    target_user_id = context.user_data['target_user_id']
+    try:
+        target_user_id = context.user_data['target_user_id']
+    except KeyError:
+        update.message.reply_text('Пока не кому слать — команда работает только в режиме диалога с пользователем')
     context.bot.send_message(
         chat_id=target_user_id,
         text=msg_send_invitation
@@ -91,7 +99,7 @@ def send_invitation(update, context):
 def user_request_add_to_bot(update, context):
     user_id = update.message.from_user.id
     if is_subscriber(user_id):
-        update.message.reply_text('Вы уже подпиисаны на бот')
+        update.message.reply_text(msg_already_subscribed)
     else:
         admin_notification(update, context)
         update.message.reply_text('Ваш запрос отправлен админу')
@@ -206,7 +214,7 @@ def send_matched_users(update, context):
     real_name = update.message.text
     msg = msg_searched_users_to_block(real_name)
     if len(msg) == 0:
-        update.message.reply_text('Не найдено совпадений. Задайте другие данные')
+        update.message.reply_text(msg_delete_users_no_result)
         return '1'
 
     else:
@@ -232,10 +240,6 @@ def cancel_conv(update, context):
     update.message.reply_text('Режим диалога завершён')
     return ConversationHandler.END
 
-
-
-def get_id_to_delete(update, context):
-    pass
 
 
 

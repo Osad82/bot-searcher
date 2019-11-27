@@ -57,7 +57,8 @@ def main():
                       CommandHandler('delete', block_user_start)], 
 
         states={
-            '1': [MessageHandler(Filters.text, send_matched_users)],
+            '1': [MessageHandler(Filters.text, send_matched_users),
+                  CommandHandler('cancel', cancel_conv)],
 
             '2': [MessageHandler(Filters.text, block_user), 
                   CommandHandler('cancel', cancel_conv)]
