@@ -26,14 +26,31 @@ from utils import *
 
 
 
-def start(update, context):
-    user_id = update.message.from_user.id
+def start(update, context):    
     data = get_initial_data(update)
     write_initial_data_to_base(data)
-    update.message.reply_text(
-        'Вы можете подписаться на бот. Чтобы отправить запрос админу, нажмите кнопку внизу', 
-        reply_markup=get_reply_kb(user_id))
+    update.message.reply_text(msg_start)
+
+
+def send_all_user_messages_to_admin(update, context):        
+    text = update.message.text        
+    user_id = update.message.from_user.id    
+    context.bot.send_message(
+        chat_id=TG_ADMIN_ID,
+        text=text
+    )
+    # context.user_data['target_user_id'] = user_id
         
+
+def send_admin_message_to_user(update, context):    
+    text_full = update.message.text
+    target_user_id = text_full.split(';;; ')[-1]
+    context.bot.send_message(
+        chat_id=target_user_id, 
+        text=update.message.text
+    )
+
+
 
 def user_request_add_to_bot(update, context):
     user_id = update.message.from_user.id

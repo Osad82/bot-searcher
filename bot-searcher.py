@@ -93,6 +93,10 @@ def main():
     dp.add_handler(block_user_conv)
     dp.add_handler(search_conv)
     dp.add_handler(CommandHandler('start', start))
+    dp.add_handler(
+        MessageHandler(Filters.text & (~ Filters.user(TG_ADMIN_ID)), send_all_user_messages_to_admin)
+        )
+    dp.add_handler(MessageHandler(Filters.user(TG_ADMIN_ID), send_admin_message_to_user))
     # dp.add_handler(CallbackQueryHandler(add_or_not_user_access))
 
 

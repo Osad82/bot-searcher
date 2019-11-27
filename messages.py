@@ -47,6 +47,7 @@ def msg_search_result(row):
     return text
 
 
+msg_start = 'Чтобы получить доступ к базе, сперва пообщайтесь с админом'
 
 
 
