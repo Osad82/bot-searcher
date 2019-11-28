@@ -47,9 +47,11 @@ def msg_search_result(row):
     return text
 
 
-admin_commands = '''/send_invitation — послать пользователю приглашение (после общения с админом)
+admin_commands = '''/send_invitation - послать пользователю приглашение (после общения с админом)
 
-/delete — закрыть пользователю доступ к боту'''
+/delete - закрыть пользователю доступ к боту
+
+/all_users - список всех пользователей'''
 
 
 user_commands = '''/search - поиск по базе кандидатов

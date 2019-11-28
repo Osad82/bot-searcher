@@ -1,5 +1,7 @@
 import logging
+import sys
 
+from threading import Thread
 from telegram import InlineQuery
 from telegram.ext import Updater, CallbackQueryHandler, ConversationHandler, CommandHandler, \
         MessageHandler, RegexHandler, Filters, CallbackQueryHandler
@@ -26,6 +28,17 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(funcName)s - %(messa
 
 
 mybot = Updater(TOKEN, use_context=True)
+
+
+def stop_and_restart():
+    """Gracefully stop the Updater and replace the current process with a new one"""
+    mybot.stop()
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+def restart(update, context):
+    update.message.reply_text('Bot is restarting...')
+    Thread(target=stop_and_restart).start()
+
 
 def main():   
 
@@ -101,11 +114,14 @@ def main():
     dp.add_handler(approve_conv)
     dp.add_handler(CommandHandler('send_invitation', send_invitation))
     dp.add_handler(CommandHandler('new_user', user_request_add_to_bot))
+    dp.add_handler(CommandHandler('all_users', get_all_users))
     dp.add_handler(CommandHandler('help', help_message))
 
     dp.add_handler(MessageHandler(Filters.user(TG_ADMIN_ID), send_admin_message_to_user))
     
     dp.add_handler(CallbackQueryHandler(add_or_not_user_access))
+    
+    dp.add_handler(CommandHandler('r', restart, filters=Filters.user(TG_ADMIN_ID)))
 
 
     # webhook_domain = 'https://python-developer.ru'    

@@ -1,3 +1,5 @@
+import os
+
 from telegram.error import BadRequest
 from telegram import ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
@@ -24,9 +26,6 @@ from utils import *
 # имя пользователя, по которому потом можно будет его вытягивать из базы для удаления. 
 # Человеку приходит уведомление, что его одобрили и он теперь может искать в базе. 
 
-
-# TODO Сделать выдёргивание из базы всех юзеров
-# TODO Поправить слетевшую команду new_user (см. логи на сервере)
 
 
 
@@ -265,6 +264,22 @@ def help_message(update, context):
         update.message.reply_text(msg_help_admin)
     else:
         update.message.reply_text(msg_help_user)
+
+
+def get_all_users(update, context):
+    text, count = text_all_users()    
+    if count < 20:
+        update.message.reply_text(text)
+
+    else:
+        file_path = os.path.join(os.getcwd(), 'users.txt')
+        write_users_to_file(file_path, text)
+        context.bot.send_document(
+            chat_id=update.message.chat_id, 
+            document=open(file_path, 'rb')            
+        )
+        os.remove(file_path)
+    
 
 
 

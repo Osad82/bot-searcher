@@ -165,10 +165,8 @@ def is_subscriber(user_id):
     for user in users_list:
         check_user_id, access = user
         if check_user_id == user_id:
-            if access == 'yes':  
-                print('True')              
-                return True    
-    print('False')
+            if access == 'yes':                              
+                return True        
     return False
 
 
@@ -196,16 +194,20 @@ def msg_searched_users_to_block(real_name):
         return msg
 
 
-def get_all_users():
+def text_all_users():
     text = ''
     users_list = list_from_base_column('user_id, username, real_name')
     for user in users_list:
         user_id, username, real_name = user
-        text += f'{str(user_id)} - {username} - {real_name}\n'            
-        
-    text = text[:-1]   
-    print(text)
-    return text
+        text += f'{str(user_id)} - {username} - {real_name}\n'
+    text = text[:-1] 
+    return text, len(users_list)
+
+
+def write_users_to_file(file_path, text):
+    with open(file_path, 'w') as f:
+        f.write(text)
+
 
 
 
@@ -215,6 +217,6 @@ if __name__ == "__main__":
     # is_subscriber(891850606)
     # get_user_id_by_real_name('Катю')
     # r = msg_searched_users_to_block('Тан')
-    r = get_all_users()
-    # print(r)
+    r = text_all_users()
+    print(r)
     # pass
