@@ -25,6 +25,10 @@ from utils import *
 # Человеку приходит уведомление, что его одобрили и он теперь может искать в базе. 
 
 
+# TODO Сделать выдёргивание из базы всех юзеров
+# TODO Поправить слетевшую команду new_user (см. логи на сервере)
+
+
 
 
 
@@ -104,7 +108,9 @@ def user_request_add_to_bot(update, context):
         admin_notification(update, context)
         update.message.reply_text('Ваш запрос отправлен админу')
 
-    
+
+'''ОТКРЫТИЕ ДОСТУПА ЮЗЕРУ'''
+
 def add_or_not_user_access(update, context):
     query = update.callback_query
     if 'yes' in query.data:
@@ -157,7 +163,6 @@ def pass_get_real_name(update, context):
     return ConversationHandler.END
 
 
-
 def admin_notification(update, context):
     user_name = update.message.from_user.username
     user_id = update.message.from_user.id
@@ -169,6 +174,8 @@ def admin_notification(update, context):
         reply_markup=get_inline_keyboard(update, context)
     )
 
+
+'''ПОЛЬЗОВАТЕЛЬ ИЩЕТ В БАЗЕ '''
 
 def user_search(update, context):
     user_id = update.message.from_user.id
@@ -196,6 +203,8 @@ def send_search_result(update, context):
     return ConversationHandler.END
     
 
+'''БЛОКИРОВКА ПОЛЬЗОВАТЕЛЯ'''
+
 def block_user_start(update, context):    
     user_id = update.message.from_user.id
 
@@ -215,6 +224,7 @@ def send_matched_users(update, context):
     msg = msg_searched_users_to_block(real_name)
     if len(msg) == 0:
         update.message.reply_text(msg_delete_users_no_result)
+        update.message.reply_text(msg_delete_users_no_result_2)
         return '1'
 
     else:
@@ -235,10 +245,26 @@ def block_user(update, context):
     return ConversationHandler.END
 
 
+def cancel_block_user(update, context):
+    update.message.reply_text('Вышли из режима блокировки пользователя')
+    return ConversationHandler.END
+
+
+def fallback_block_user(update, context):
+    update.message.reply_text(msg_fallback_block_user)
+
 
 def cancel_conv(update, context):
-    update.message.reply_text('Режим диалога завершён')
+    update.message.reply_text('Вышли из текущего режима')
     return ConversationHandler.END
+
+
+def help_message(update, context):
+    user_id = update.message.from_user.id
+    if user_id == TG_ADMIN_ID:
+        update.message.reply_text(msg_help_admin)
+    else:
+        update.message.reply_text(msg_help_user)
 
 
 

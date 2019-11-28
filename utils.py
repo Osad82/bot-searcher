@@ -196,7 +196,16 @@ def msg_searched_users_to_block(real_name):
         return msg
 
 
-
+def get_all_users():
+    text = ''
+    users_list = list_from_base_column('user_id, username, real_name')
+    for user in users_list:
+        user_id, username, real_name = user
+        text += f'{str(user_id)} - {username} - {real_name}\n'            
+        
+    text = text[:-1]   
+    print(text)
+    return text
 
 
 
@@ -206,6 +215,6 @@ if __name__ == "__main__":
     # is_subscriber(891850606)
     # get_user_id_by_real_name('Катю')
     # r = msg_searched_users_to_block('Тан')
-    r = get_data_cell('real_name', 374251293)
-    print(r)
+    r = get_all_users()
+    # print(r)
     # pass

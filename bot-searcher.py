@@ -58,15 +58,15 @@ def main():
 
         states={
             '1': [MessageHandler(Filters.text, send_matched_users),
-                  CommandHandler('cancel', cancel_conv)],
+                  CommandHandler('cancel', cancel_block_user)],
 
             '2': [MessageHandler(Filters.text, block_user), 
-                  CommandHandler('cancel', cancel_conv)]
+                  CommandHandler('cancel', cancel_block_user)]
 
             
         }, 
 
-        fallbacks=[]
+        fallbacks=[MessageHandler(Filters.text, fallback_block_user)]
     )
 
 
@@ -101,14 +101,15 @@ def main():
     dp.add_handler(approve_conv)
     dp.add_handler(CommandHandler('send_invitation', send_invitation))
     dp.add_handler(CommandHandler('new_user', user_request_add_to_bot))
+    dp.add_handler(CommandHandler('help', help_message))
 
     dp.add_handler(MessageHandler(Filters.user(TG_ADMIN_ID), send_admin_message_to_user))
     
-    # dp.add_handler(CallbackQueryHandler(add_or_not_user_access))
+    dp.add_handler(CallbackQueryHandler(add_or_not_user_access))
 
 
-    # webhook_domain = 'https://translatebot.ru'    
-    # PORT = 5003
+    # webhook_domain = 'https://python-developer.ru'    
+    # PORT = 5015
 
     # mybot.start_webhook(listen='127.0.0.1',
     #                 port=PORT,
