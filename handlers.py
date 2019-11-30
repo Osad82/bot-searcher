@@ -45,6 +45,10 @@ def send_all_user_messages_to_admin(update, context):
     text = update.message.text        
     user_id = update.message.from_user.id    
 
+    conv_status = get_data_cell('conv_status', user_id)
+    if conv_status == 'closed':
+        pass
+
     if 'conv_started' not in context.user_data:
         context.user_data['conv_started'] = 'yes'
         context.bot.send_message(
@@ -143,7 +147,7 @@ def get_real_name(update, context):
         chat_id=target_user_id,
         text=msg_approved_start_message
     )
-
+    close_conv(update, context)
     return ConversationHandler.END
 
 
@@ -159,6 +163,7 @@ def pass_get_real_name(update, context):
         chat_id=target_user_id,
         text=msg_approved_start_message
     )
+    close_conv(update, context)
     return ConversationHandler.END
 
 

@@ -91,7 +91,8 @@ def create_user_base():
                        user_id      INTEGER PRIMARY KEY, 
                        username     TEXT, 
                        real_name    TEXT,
-                       access       TEXT)''' 
+                       access       TEXT, 
+                       conv_status  TEXT)''' 
                     )
     conn.commit()
     conn.close()
@@ -209,6 +210,9 @@ def write_users_to_file(file_path, text):
         f.write(text)
 
 
+def close_conv(update, context):
+    target_user_id = context.user_data['target_user_id']
+    write_entry_to_base('conv_status', 'closed', target_user_id)
 
 
 
