@@ -10,3 +10,4 @@ images/
 *.json
 token.pickle
 *.txt
+persistence*
