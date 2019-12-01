@@ -222,11 +222,15 @@ def write_users_to_file(file_path, text):
 def close_conv(update, context):
     target_user_id = context.user_data['target_user_id']
     write_entry_to_base('conv_status', 'closed', target_user_id)
+    del_target_user_data_from_context(update, context)
 
 
-# TODO сделать удаление данных пользоваетеля при загрытии разговора
-# TODO добавить удаление context.user_data['button_pressed'] = 'yes'
-
+def del_target_user_data_from_context(update, context):
+    del context.user_data['target_user_id']
+    del context.user_data['target_username']
+    del context.user_data['real_name']
+    del context.user_data['access']
+    del context.user_data['button_pressed']
 
 
 
