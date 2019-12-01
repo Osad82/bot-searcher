@@ -112,6 +112,7 @@ def main():
     dp.add_handler(CommandHandler('new_user', user_request_add_to_bot))
     dp.add_handler(CommandHandler('all_users', get_all_users))
     dp.add_handler(CommandHandler('help', help_message))
+    dp.add_handler(CommandHandler('add', user_add_in_blocklist))
 
     dp.add_handler(CommandHandler('r', restart, filters=Filters.user(DEV_ID)))
     dp.add_handler(CallbackQueryHandler(add_or_not_user_access))

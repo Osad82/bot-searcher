@@ -161,6 +161,14 @@ def get_data_cell(column, user_id):
     return date_list[0]
 
 
+def delete_string(user_id):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute(f'DELETE FROM users WHERE user_id=?', (user_id,))    
+    conn.commit()
+    conn.close()               
+    
+
 def is_subscriber(user_id):
     users_list = list_from_base_column('user_id, access')
     for user in users_list:

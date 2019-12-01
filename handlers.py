@@ -15,19 +15,23 @@ from utils import *
 
 
 # Итого:
-# TODO 1. Закрывать диалог (с обеих сторон) с юзером при одобрении доступа.
 
-# TODO 3. Внести в меню операторов пользователя оператор add.
-# TODO 4. При пробивке без операторов показывать сообщение: "Для проверки ФИО..."
 # TODO 5. Сделать так, чтобы список всех операторов открывался сразу по нажатию на квадратик.
 # TODO 6. Блокировка и поиск по ID.
-# TODO 7. Удалить значить удалить полностью из списка. Если админ использует delete, то пусть пользователь удаляется из него.
+
 
 
 
 # СДЕЛАЛ: 
 
+# 1. Закрывать диалог (с обеих сторон) с юзером при одобрении доступа.
 # 2. Дать админу тоже фичу пробивки.
+# 3. Внести в меню операторов пользователя оператор add.
+# 4. При пробивке без операторов показывать сообщение: "Для проверки ФИО..."
+
+# 7. Удалить значит удалить полностью из списка. Если админ использует delete, то пусть пользователь удаляется из него.
+
+
 
 
 
@@ -250,7 +254,8 @@ def send_matched_users(update, context):
 def block_user(update, context):
     user_id = update.message.from_user.id
     target_user_id = update.message.text
-    write_entry_to_base('access', 'no', target_user_id)
+    # write_entry_to_base('access', 'no', target_user_id)
+    delete_string(target_user_id)
     update.message.reply_text(
         f'Пользователь с id {target_user_id} больше не имеет доступа к боту',
         reply_markup=get_reply_kb(user_id))
@@ -294,6 +299,8 @@ def get_all_users(update, context):
         os.remove(file_path)
     
 
+def user_add_in_blocklist(update, context):
+    update.message.reply_text(msg_user_add_in_blocklist)
 
 
 
