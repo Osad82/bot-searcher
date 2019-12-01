@@ -75,9 +75,9 @@ def send_all_user_messages_to_admin(update, context):
     
         
 
-def send_admin_message_to_user(update, context):    
-    text = update.message.text    
-    try:
+def send_admin_message_to_user(update, context):   
+    if 'target_user_id' in context.user_data:
+        text = update.message.text    
         target_user_id = context.user_data['target_user_id']
         if is_conv_closed(update, context):
             update.message.reply_text(msg_to_admin_conv_closed)
@@ -87,8 +87,11 @@ def send_admin_message_to_user(update, context):
             chat_id=target_user_id, 
             text=text
         )
-    except KeyError:
-        update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
+    else:
+        if 'button_pressed' not in context.user_data:
+            update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
+        else:
+            update.message.reply_text(msg_to_admin_conv_closed)
 
 
 

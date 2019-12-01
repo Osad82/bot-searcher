@@ -186,6 +186,7 @@ def save_target_user_data_to_context(update, context):
     context.user_data['target_username'] = target_username
     context.user_data['real_name'] = real_name
     context.user_data['access'] = access
+    context.user_data['button_pressed'] = 'yes'
     
 
 
@@ -221,6 +222,10 @@ def write_users_to_file(file_path, text):
 def close_conv(update, context):
     target_user_id = context.user_data['target_user_id']
     write_entry_to_base('conv_status', 'closed', target_user_id)
+
+
+# TODO сделать удаление данных пользоваетеля при загрытии разговора
+# TODO добавить удаление context.user_data['button_pressed'] = 'yes'
 
 
 
