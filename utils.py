@@ -186,9 +186,7 @@ def save_target_user_data_to_context(update, context):
     context.user_data['target_username'] = target_username
     context.user_data['real_name'] = real_name
     context.user_data['access'] = access
-    context.user_data['button_pressed'] = 'yes'
     
-
 
 def msg_searched_users_to_block(real_name):
     text = ''
@@ -230,8 +228,6 @@ def del_target_user_data_from_context(update, context):
     del context.user_data['target_username']
     del context.user_data['real_name']
     del context.user_data['access']
-    del context.user_data['button_pressed']
-
 
 
 def is_conv_closed(update, context):    

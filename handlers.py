@@ -17,7 +17,7 @@ from utils import *
 # Итого:
 
 # TODO 5. Сделать так, чтобы список всех операторов открывался сразу по нажатию на квадратик.
-# TODO 6. Блокировка и поиск по ID.
+
 
 
 
@@ -30,7 +30,7 @@ from utils import *
 # 4. При пробивке без операторов показывать сообщение: "Для проверки ФИО..."
 
 # 7. Удалить значит удалить полностью из списка. Если админ использует delete, то пусть пользователь удаляется из него.
-
+# 6. Блокировка и поиск по ID.
 
 
 
@@ -48,7 +48,7 @@ def start(update, context):
     write_entry_to_base('conv_status', 'started', user_id)
 
 
-def send_all_user_messages_to_admin(update, context):        
+def send_all_user_messages_to_admin(update, context):       
     text = update.message.text        
     user_id = update.message.from_user.id    
 
@@ -87,11 +87,8 @@ def send_admin_message_to_user(update, context):
             chat_id=target_user_id, 
             text=text
         )
-    else:
-        if 'button_pressed' not in context.user_data:
-            update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
-        else:
-            update.message.reply_text(msg_to_admin_conv_closed)
+    else:        
+        update.message.reply_text(msg_to_admin_conv_closed)
 
 
 
