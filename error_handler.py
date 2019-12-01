@@ -21,7 +21,8 @@ def error(update, context):
     # third value of the returned tuple. Then we use the traceback.format_tb to get the traceback as a string, which
     # for a weird reason separates the line breaks in a list, but keeps the linebreaks itself. So just joining an
     # empty string works fine.
-    trace = "".join(traceback.format_tb(sys.exc_info()[2]))
+    # trace = "".join(traceback.format_tb(sys.exc_info()[2]))
+    trace = str(traceback.format_exc())
     # lets try to get as much information from the telegram update as possible
     payload = ""
     # normally, we always have an user. If not, its either a channel or a poll update.
@@ -42,6 +43,6 @@ def error(update, context):
     for dev_id in devs:
         context.bot.send_message(dev_id, text, parse_mode=ParseMode.HTML)
     # we raise the error again, so the logger module catches it. If you don't use the logger module, use it.
-    raise Exception('we raise the error again, so the logger module catches it')
+    raise Exception('Ещё раз вывзываем исключение, чтобы его захватил логгер')
 
 

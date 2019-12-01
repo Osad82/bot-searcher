@@ -216,6 +216,20 @@ def close_conv(update, context):
 
 
 
+
+def is_conv_closed(update, context):    
+    user_id = update.message.from_user.id
+    if user_id == TG_ADMIN_ID:
+        user_id = context.user_data['target_user_id']
+    conv_status = get_data_cell('conv_status', user_id)
+    if conv_status == 'closed':        
+        return True
+    else:
+        return False
+
+
+
+
 if __name__ == "__main__":
     # p = get_data_string('*', TG_ADMIN_ID)
     # is_subscriber(891850606)

@@ -24,10 +24,10 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(funcName)s - %(messa
 
 
     
-my_persistence = PicklePersistence(filename='persistence_file', store_user_data=True)
-mybot = Updater(TOKEN, persistence=my_persistence, use_context=True)
+# my_persistence = PicklePersistence(filename='persistence_file', store_user_data=True)
+# mybot = Updater(TOKEN, persistence=my_persistence, use_context=True)
 
-
+mybot = Updater(TOKEN, use_context=True)
 
 def stop_and_restart():
     """Gracefully stop the Updater and replace the current process with a new one"""

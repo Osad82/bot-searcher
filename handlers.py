@@ -5,8 +5,10 @@ from telegram import ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
 from config import *
+from messages import *
 from google_utils import get_list_of_rows, search
 from utils import *
+
 
 
 
@@ -39,15 +41,16 @@ def start(update, context):
         update.message.reply_text(msg_start_admin, reply_markup=ReplyKeyboardRemove())
     else:
         update.message.reply_text(msg_start, reply_markup=ReplyKeyboardRemove())
+    write_entry_to_base('conv_status', 'started', user_id)
 
 
 def send_all_user_messages_to_admin(update, context):        
     text = update.message.text        
     user_id = update.message.from_user.id    
 
-    conv_status = get_data_cell('conv_status', user_id)
-    if conv_status == 'closed':
-        pass
+    if is_conv_closed(update, context):
+        update.message.reply_text(msg_to_user_conv_closed)
+        return
 
     if 'conv_started' not in context.user_data:
         context.user_data['conv_started'] = 'yes'
@@ -72,6 +75,10 @@ def send_admin_message_to_user(update, context):
     text = update.message.text    
     try:
         target_user_id = context.user_data['target_user_id']
+        if is_conv_closed(update, context):
+            update.message.reply_text(msg_to_admin_conv_closed)
+            return
+
         context.bot.send_message(
             chat_id=target_user_id, 
             text=text
@@ -88,6 +95,7 @@ def query_handler(update, context):
     query = update.callback_query    
     if 'start_conv' in query.data:
         save_target_user_data_to_context(update, context)
+        target_user_id = context.user_data['target_user_id']        
         query.message.reply_text('Режим диалога включен. Теперь можно писать пользователю')
 
 
