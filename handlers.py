@@ -90,9 +90,6 @@ def send_admin_message_to_user(update, context):
     except KeyError:
         update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
 
-    # except BadRequest:
-    #     update.message.reply_text('Сперва нажмите кнопку Начать диалог, чтобы войти в режим диалога с пользователем')
-
 
 
 def query_handler(update, context):
@@ -229,15 +226,20 @@ def block_user_start(update, context):
         return ConversationHandler.END
 
     update.message.reply_text(
-        'Введите реальное имя пользователя, которого надо удалить (как в записной книжке)',
+        msg_enter_user_real_name,
         reply_markup=get_reply_kb(user_id))
     return '1'
 
 
-def send_matched_users(update, context):
+def send_matched_users(update, context):    
     user_id = update.message.from_user.id
-    real_name = update.message.text
-    msg = msg_searched_users_to_block(real_name)
+    entry = update.message.text
+    if entry.isdigit():
+        block_user(update, context)
+        return ConversationHandler.END
+    
+    msg = msg_searched_users_to_block(entry)
+
     if len(msg) == 0:
         update.message.reply_text(msg_delete_users_no_result)
         update.message.reply_text(msg_delete_users_no_result_2)
