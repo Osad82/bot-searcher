@@ -101,8 +101,15 @@ def query_handler(update, context):
 
 
 def send_invitation(update, context):
+    user_id = update.message.from_user.id
+
+    if user_id != TG_ADMIN_ID:
+        update.message.reply_text(msg_access_amin_only)
+        return
+
     try:
         target_user_id = context.user_data['target_user_id']
+            
     except KeyError:
         update.message.reply_text('Пока не кому слать — команда работает только в режиме диалога с пользователем')
         return
@@ -222,7 +229,7 @@ def block_user_start(update, context):
     user_id = update.message.from_user.id
 
     if user_id != TG_ADMIN_ID:
-        update.message.reply_text('Функционал доступен только админу')
+        update.message.reply_text(msg_access_amin_only)
         return ConversationHandler.END
 
     update.message.reply_text(
@@ -287,6 +294,11 @@ def help_message(update, context):
 
 
 def get_all_users(update, context):
+    user_id = update.message.from_user.id
+    if user_id != TG_ADMIN_ID:
+        update.message.reply_text(msg_access_amin_only)
+        return
+
     text, count = text_all_users()    
     if count < 20:
         update.message.reply_text(text)
